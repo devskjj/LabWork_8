@@ -1,6 +1,7 @@
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,7 +9,7 @@ public class Main {
         List<Integer> numbers = new Random()
                 .ints(30, 1, 18)
                 .boxed()
-                .toList();
+                .collect(Collectors.toList());
 
         System.out.println(numbers);
 
