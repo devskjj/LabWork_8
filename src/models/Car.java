@@ -5,11 +5,11 @@ import state.State;
 import java.util.UUID;
 
 public class Car {
-    private String carId;
+    private final String carId;
     private State state;
 
     public Car() {
-        this.carId = "KG-" + UUID.randomUUID().toString().substring(0,4);
+        this.carId = "KG-" + UUID.randomUUID().toString().substring(0, 4);
         this.state = State.ON_ROUTE;
     }
 
@@ -20,7 +20,19 @@ public class Car {
                 '}';
     }
 
+    public void update() {
+        state.changeState(this);
+    }
+
     public String getCarId() {
         return carId;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
     }
 }
