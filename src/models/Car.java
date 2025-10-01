@@ -2,6 +2,7 @@ package models;
 
 import state.State;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Car {
@@ -20,8 +21,12 @@ public class Car {
                 '}';
     }
 
-    public void update() {
-        state.changeState(this);
+    public void update(Park park, Journal journal, LocalDateTime time) {
+        state.changeState(this, park, journal, time);
+    }
+
+    public void showCar() {
+        System.out.println(state.getValue() + " " + carId);
     }
 
     public String getCarId() {

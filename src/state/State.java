@@ -1,22 +1,32 @@
 package state;
 
 import models.Car;
+import models.Journal;
+import models.Park;
 import util.RandomChance;
+
+import java.time.LocalDateTime;
 
 public enum State {
     ON_ROUTE("В ДВИЖЕНИИ") {
         @Override
-        public void changeState(Car car) {
-            if (RandomChance.getRandom(3)) {
-                car.setState(ON_PARK);
+        public void changeState(Car car, Park park, Journal journal, LocalDateTime time) {
+            if (park.getCount() > 0) {
+                if (RandomChance.getRandom(3)) {
+                    car.setState(ON_PARK);
+                    park.decreaseCount();
+                    journal.saveArrival(car.getCarId(), time);
+                }
             }
         }
     },
     ON_PARK("НА ПАРКОВКЕ") {
         @Override
-        public void changeState(Car car) {
+        public void changeState(Car car, Park park, Journal journal, LocalDateTime time) {
             if (RandomChance.getRandom(3)) {
                 car.setState(ON_ROUTE);
+                park.increaseCount();
+                journal.saveDeparture(car.getCarId(), time);
             }
         }
     };
@@ -27,7 +37,7 @@ public enum State {
         this.value = value;
     }
 
-    public abstract void changeState(Car car);
+    public abstract void changeState(Car car, Park park, Journal journal, LocalDateTime time);
 
     public String getValue() {
         return value;

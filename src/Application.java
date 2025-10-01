@@ -1,9 +1,20 @@
 import models.Car;
+import models.Journal;
+import models.Park;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
     public static void runApplication() {
-        Car car = new Car();
-        System.out.println(car.getCarId());
+        Journal journal = new Journal();
+        Park park = new Park(20);
+        List<Car> cars = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            cars.add(new Car());
+        }
+
 //        List<Integer> numbers = new Random()
 //                .ints(30, 1, 18)
 //                .boxed()
@@ -27,18 +38,22 @@ public class Application {
 //        System.out.println(canvas);
 //
 //
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        LocalDateTime ldtEnd = now.plusDays(30);
-//
+        LocalDateTime now = LocalDateTime.now();
+
+        LocalDateTime ldtEnd = now.plusDays(1);
+
 //        System.out.println(now);
 //        System.out.println(ldtEnd);
 //
 //        int counter = 0;
-//        for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
-//            System.out.println(i);
-//            counter++;
-//        }
+        for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
+            System.out.println(i);
+            LocalDateTime current = i;
+            cars.forEach(obj -> obj.update(park, journal, current));
+            cars.forEach(obj -> obj.showCar());
+        }
+
+        journal.printLog();
 //
 //        System.out.println(counter);
 
