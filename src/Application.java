@@ -64,7 +64,9 @@ public class Application {
             System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
         }
 
-        journal.printStatistic();
+        journal.printStatistic(); //статистика
+
+        journal.printTopTenCars(); // топ 10
 
 //
 //        System.out.println(counter);
