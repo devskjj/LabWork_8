@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Journal {
     private final List<Data> dataList;
@@ -47,6 +49,20 @@ public class Journal {
             }
         }
         return null;
+    }
+
+    public Map<String, Long> getTopTenCars() {
+        Map<String, Long> map = new HashMap<>();
+        for (Data data : dataList) {
+            if (data.getDeparture() != null && data.getDifference() != null) {
+                map.put(data.getCarId(), map.getOrDefault(data.getCarId(), 0L) + data.getDifference().toMinutes());
+            }
+        }
+        return map;
+    }
+
+    public void printTopTenCars() {
+        maps.sortTopTenCars(getTopTenCars());
     }
 
     public Long getTotalByDay(LocalDate date) {
@@ -133,6 +149,10 @@ public class Journal {
 
         public LocalDateTime getDeparture() {
             return departure;
+        }
+
+        public Duration getDifference() {
+            return difference;
         }
 
         public void setDeparture(LocalDateTime departure) {

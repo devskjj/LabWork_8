@@ -1,5 +1,6 @@
 package util;
 
+import models.Journal;
 import models.Receipt;
 
 import java.time.LocalDate;
@@ -47,5 +48,16 @@ public class Maps {
         System.out.println("Максимум: " + max);
         System.out.println("Среднее: " + average);
         System.out.println("=========================================");
+    }
+
+    public void sortTopTenCars(Map<String, Long> map) {
+        List<Map.Entry<String, Long>> maps = new ArrayList<>(map.entrySet());
+        maps.sort((m1, m2) -> Long.compare(m2.getValue(), m1.getValue()));
+
+        System.out.println("Топ 10 машин по времени стоянки:");
+        for (int i = 0; i < Math.min(10, maps.size()); i++) {
+            Map.Entry<String, Long> row = maps.get(i);
+            System.out.printf("%d. Машина %s — %d минут%n", i + 1, row.getKey(), row.getValue());
+        }
     }
 }
