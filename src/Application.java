@@ -13,7 +13,7 @@ public class Application {
         Journal journal = new Journal();
         Park park = new Park(20);
         List<Car> cars = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 7; i++) {
             cars.add(new Car());
         }
 
@@ -70,6 +70,7 @@ public class Application {
 
         journal.printLessStayed(30);
 
+        journal.printCountRatio(park);
 //
 //        System.out.println(counter);
 

@@ -86,6 +86,40 @@ public class Journal {
 
     }
 
+    public void printCountRatio(Park park) {
+        Map<LocalDate, Integer> takenCounts = new HashMap<>();
+
+        for (Data data : dataList) {
+            if (data.getArrival() != null) {
+                LocalDate arrivalDate = data.getArrival().toLocalDate();
+                takenCounts.put(arrivalDate, takenCounts.getOrDefault(arrivalDate, 0) + 1);
+            }
+
+            if (data.getDeparture() != null) {
+                LocalDate departureDate = data.getDeparture().toLocalDate();
+                takenCounts.put(departureDate, Math.max(0, takenCounts.getOrDefault(departureDate, 0) - 1));
+            }
+        }
+
+        System.out.println("=========================================");
+        for (LocalDate date : takenCounts.keySet()) {
+            int occupied = takenCounts.get(date);
+            int total = park.getInitialCount();
+
+            System.out.printf("Дата: %s%n", date);
+            System.out.printf("Занималось мест: %d%n", occupied);
+            System.out.printf("Свободных было мест: %d%n", total - occupied);
+
+            if (total > 0) {
+                double ratio = (double) occupied / total * 100;
+                System.out.printf("Отношение занятых мест к свободным: %.2f%%%n", ratio);
+            } else {
+                System.out.println("Ошибка - нет мест.");
+            }
+            System.out.println("=========================================");
+        }
+    }
+
     public void printTopTenCars() {
         maps.sortTopTenCars(getTopTenCars());
     }
