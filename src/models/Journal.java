@@ -7,10 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Journal {
     private final List<Data> dataList;
@@ -88,7 +85,6 @@ public class Journal {
 
     public void printCountRatio(Park park) {
         Map<LocalDate, Integer> takenCounts = new HashMap<>();
-
         for (Data data : dataList) {
             if (data.getArrival() != null) {
                 LocalDate arrivalDate = data.getArrival().toLocalDate();
@@ -100,7 +96,10 @@ public class Journal {
                 takenCounts.put(departureDate, Math.max(0, takenCounts.getOrDefault(departureDate, 0) - 1));
             }
         }
+        printAveragePercentOfCounts(park, takenCounts);
+    }
 
+    private void printAveragePercentOfCounts(Park park, Map<LocalDate, Integer> takenCounts) {
         System.out.println("=========================================");
         for (LocalDate date : takenCounts.keySet()) {
             int occupied = takenCounts.get(date);
@@ -118,6 +117,58 @@ public class Journal {
             }
             System.out.println("=========================================");
         }
+    }
+
+    public void printCarsByDate(LocalDate date) {
+        System.out.println("=========================================");
+        System.out.printf("Машины, побывавшие на парковке %s:%n", date);
+
+        Set<String> uniqueCars = new HashSet<>();
+        boolean found = false;
+        for (Data data : dataList) {
+            LocalDate arrivalDate = (data.getArrival() != null) ? data.getArrival().toLocalDate() : null;
+            LocalDate departureDate = (data.getDeparture() != null) ? data.getDeparture().toLocalDate() : null;
+
+            if ((arrivalDate != null && arrivalDate.equals(date)) || (departureDate != null && departureDate.equals(date))) {
+                if (!uniqueCars.contains(data.getCarId())) {
+                    uniqueCars.add(data.getCarId());
+                    System.out.println(data.getCarId());
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("На парковке в этот день не было машин.");
+        }
+        System.out.println("=========================================");
+    }
+
+    public void printCarsByHour(LocalDateTime startTime, LocalDateTime endTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        System.out.println("=========================================");
+        System.out.printf("Машины, побывавшие на парковке с %s до %s:%n", startTime.format(formatter), endTime.format(formatter));
+
+        Set<String> uniqueCars = new HashSet<>();
+        boolean found = false;
+        for (Data data : dataList) {
+            LocalDateTime arrivalTime = data.getArrival();
+            LocalDateTime departureTime = data.getDeparture();
+            if ((arrivalTime != null && !arrivalTime.isBefore(startTime) && !arrivalTime.isAfter(endTime)) ||
+                    (departureTime != null && !departureTime.isBefore(startTime) && !departureTime.isAfter(endTime))) {
+                if (!uniqueCars.contains(data.getCarId())) {
+                    uniqueCars.add(data.getCarId());
+                    System.out.println(data.getCarId());
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("На парковке в этот час не было машин.");
+        }
+        System.out.println("=========================================");
     }
 
     public void printTopTenCars() {
