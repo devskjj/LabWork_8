@@ -70,7 +70,13 @@ public class Application {
 
         journal.printLessStayed(30);
 
-        journal.printCountRatio(park);
+        journal.printCountRatio(park); // среднйи процент
+
+        journal.printCarsByDate(chooseDate);
+
+        LocalDateTime startHour = LocalDateTime.now().withHour(14).withMinute(0).withSecond(0); // c
+        LocalDateTime endHour = startHour.plusHours(1); // по
+        journal.printCarsByHour(startHour, endHour);
 //
 //        System.out.println(counter);
 
