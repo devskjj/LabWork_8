@@ -61,6 +61,31 @@ public class Journal {
         return map;
     }
 
+    public void printLessStayed(long minutes) {
+        Map<LocalDate, Integer> lessStayed = new HashMap<>();
+        for (Data data : dataList) {
+            if (data.getDeparture() != null && data.getDifference() != null) {
+                long duration = data.getDifference().toMinutes();
+                if (duration < minutes) {
+                    LocalDate date = data.getDeparture().toLocalDate();
+                    lessStayed.put(date, lessStayed.getOrDefault(date, 0) + 1);
+                }
+            }
+        }
+        if (lessStayed.isEmpty()) {
+            System.out.println("Нет машин, стоявших меньше " + minutes + " минут.");
+            return;
+        }
+
+        System.out.println("=========================================");
+        System.out.println("Количество машин, стоявших меньше " + minutes + " минут по дням:");
+        for (Map.Entry<LocalDate, Integer> row : lessStayed.entrySet()) {
+            System.out.printf("%s: %d машин(ы)%n", row.getKey(), row.getValue());
+        }
+        System.out.println("=========================================");
+
+    }
+
     public void printTopTenCars() {
         maps.sortTopTenCars(getTopTenCars());
     }

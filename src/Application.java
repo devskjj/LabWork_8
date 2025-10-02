@@ -68,6 +68,8 @@ public class Application {
 
         journal.printTopTenCars(); // топ 10
 
+        journal.printLessStayed(30);
+
 //
 //        System.out.println(counter);
 
