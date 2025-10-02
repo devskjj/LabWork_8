@@ -53,6 +53,10 @@ public class Journal {
         return maps.getTotalByDate(date);
     }
 
+    public void printStatistic() {
+        maps.printStatistic();
+    }
+
     public void printLog() {
         dataList.forEach(System.out::println);
     }
