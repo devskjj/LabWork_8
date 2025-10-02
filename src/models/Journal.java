@@ -2,6 +2,7 @@ package models;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,16 @@ public class Journal {
         }
     }
 
+    public Receipt createReceipt(String carId, int rate, int minutesRate, long freeMinutes) {
+        for (int i = dataList.size() - 1; i >= 0; i--) {
+            Data data = dataList.get(i);
+            if (data.getDeparture() != null && data.getCarId().equals(carId)) {
+                return data.setLogicForReceipt(rate, minutesRate, freeMinutes);
+            }
+        }
+        return null;
+    }
+
     public void printLog() {
         dataList.forEach(System.out::println);
     }
@@ -38,6 +49,7 @@ public class Journal {
         private LocalDateTime arrival;
         private LocalDateTime departure;
         private Duration difference;
+        private Receipt receipt;
 
         public Data(String carId, LocalDateTime arrival) {
             this.carId = carId;
@@ -48,10 +60,50 @@ public class Journal {
         public String toString() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             String departureStr = (departure != null) ? departure.format(formatter) : "не выезжал";
-            String durationStr = (difference != null) ? String.valueOf(difference.toMinutes()) : "неизвестно";
+            String durationStr;
+            if (arrival != null && departure != null) {
+                Duration realDuration = Duration.between(arrival, departure);
+                durationStr = String.valueOf(realDuration.toMinutes());
+            } else {
+                durationStr = "неизвестно";
+            }
             return "Номер машины: " + carId +
                     ", Въезд: " + arrival.format(formatter) +
-                    ", Выезд: " + departureStr + " *** длительность парковки: " + durationStr + " мин";
+                    ", Выезд: " + departureStr + " (длительность: " + durationStr + " мин)" + "\n"
+                    + ((receipt == null) ? "Оплата не взимается" : receipt.toString()) + "\n";
+        }
+
+        public Receipt setLogicForReceipt(int rate, int minutesRate, long freeMinutes) {
+            if (departure == null) return null;
+
+            LocalTime start = LocalTime.of(9, 0);
+            LocalTime end = LocalTime.of(21, 0);
+            boolean sameDay = arrival.toLocalDate().equals(departure.toLocalDate());
+
+            if (setDifferenceOfDay(start, end, sameDay)) return null;
+            if (difference.toMinutes() <= freeMinutes) return null;
+
+            long toPay = difference.toMinutes();
+            long totalCost = ((toPay - freeMinutes) / minutesRate) * rate;
+            return receipt = new Receipt(carId, difference, rate, totalCost);
+        }
+
+        private boolean setDifferenceOfDay(LocalTime start, LocalTime end, boolean sameDay) {
+            if (sameDay) {
+                LocalDateTime additionalArrival = arrival.toLocalTime().isBefore(start) ? arrival.toLocalDate().atTime(start) : arrival;
+                LocalDateTime departureAfterNine = departure.toLocalTime().isAfter(end) ? departure.toLocalDate().atTime(end) : departure;
+
+                if (additionalArrival.isAfter(departureAfterNine)) return true;
+                this.difference = Duration.between(additionalArrival, departureAfterNine);
+            } else {
+                LocalDateTime startNextDay = arrival.toLocalDate().plusDays(1).atTime(start);
+                LocalDateTime endNextDay = arrival.toLocalDate().plusDays(1).atTime(end);
+
+                if (departure.isBefore(startNextDay)) return true;
+                LocalDateTime actualDeparture = departure.isAfter(endNextDay) ? endNextDay : departure;
+                this.difference = Duration.between(startNextDay, actualDeparture);
+            }
+            return false;
         }
 
         public String getCarId() {
@@ -68,7 +120,6 @@ public class Journal {
 
         public void setDeparture(LocalDateTime departure) {
             this.departure = departure;
-            this.difference = Duration.between(this.arrival, this.departure);
         }
     }
 }

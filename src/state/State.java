@@ -27,6 +27,7 @@ public enum State {
                 car.setState(ON_ROUTE);
                 park.increaseCount();
                 journal.saveDeparture(car.getCarId(), time);
+                journal.createReceipt(car.getCarId(), 10, 5, 30);
             }
         }
     };
