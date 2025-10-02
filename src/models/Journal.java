@@ -69,7 +69,7 @@ public class Journal {
             }
             return "Номер машины: " + carId +
                     ", Въезд: " + arrival.format(formatter) +
-                    ", Выезд: " + departureStr + " (длительность: " + durationStr + " мин)" + "\n"
+                    ", Выезд: " + departureStr + " (Общ. длит-сть: " + durationStr + " мин)" + "\n"
                     + ((receipt == null) ? "Оплата не взимается" : receipt.toString()) + "\n";
         }
 
@@ -84,7 +84,7 @@ public class Journal {
             if (difference.toMinutes() <= freeMinutes) return null;
 
             long toPay = difference.toMinutes();
-            long totalCost = ((toPay - freeMinutes) / minutesRate) * rate;
+            long totalCost = (((toPay - freeMinutes) + minutesRate - 1) / minutesRate) * rate;
             return receipt = new Receipt(carId, difference, rate, totalCost);
         }
 
