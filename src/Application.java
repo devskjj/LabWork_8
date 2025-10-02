@@ -2,6 +2,7 @@ import models.Car;
 import models.Journal;
 import models.Park;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class Application {
 //
         LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime ldtEnd = now.plusDays(1);
+        LocalDateTime ldtEnd = now.plusDays(5);
 
 //        System.out.println(now);
 //        System.out.println(ldtEnd);
@@ -53,8 +54,16 @@ public class Application {
             cars.forEach(obj -> obj.update(park, journal, current));
             cars.forEach(obj -> obj.showCar());
         }
-
         journal.printLog();
+
+        LocalDate chooseDate = LocalDate.now().plusDays(1); // со скана запрашивать число
+        Long total = journal.getTotalByDay(chooseDate);
+        if (total == null) {
+            System.out.printf("За %s нет заработка%n", chooseDate);
+        } else {
+            System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
+        }
+
 //
 //        System.out.println(counter);
 
