@@ -1,6 +1,9 @@
 package models;
 
+import util.Maps;
+
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -9,9 +12,11 @@ import java.util.List;
 
 public class Journal {
     private final List<Data> dataList;
+    private final Maps maps;
 
     public Journal() {
         this.dataList = new ArrayList<>();
+        this.maps = new Maps();
     }
 
     public void saveArrival(String carId, LocalDateTime time) {
@@ -34,10 +39,18 @@ public class Journal {
         for (int i = dataList.size() - 1; i >= 0; i--) {
             Data data = dataList.get(i);
             if (data.getDeparture() != null && data.getCarId().equals(carId)) {
-                return data.setLogicForReceipt(rate, minutesRate, freeMinutes);
+                Receipt receipt = data.setLogicForReceipt(rate, minutesRate, freeMinutes);
+                if (receipt != null) {
+                    maps.add(receipt);
+                }
+                return receipt;
             }
         }
         return null;
+    }
+
+    public Long getTotalByDay(LocalDate date) {
+        return maps.getTotalByDate(date);
     }
 
     public void printLog() {
@@ -85,7 +98,7 @@ public class Journal {
 
             long toPay = difference.toMinutes();
             long totalCost = (((toPay - freeMinutes) + minutesRate - 1) / minutesRate) * rate;
-            return receipt = new Receipt(carId, difference, rate, totalCost);
+            return receipt = new Receipt(carId, difference, rate, totalCost, departure.toLocalDate());
         }
 
         private boolean setDifferenceOfDay(LocalTime start, LocalTime end, boolean sameDay) {
@@ -120,6 +133,10 @@ public class Journal {
 
         public void setDeparture(LocalDateTime departure) {
             this.departure = departure;
+        }
+
+        public Receipt getReceipt() {
+            return receipt;
         }
     }
 }
