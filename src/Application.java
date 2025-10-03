@@ -7,45 +7,50 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Application {
     public static void runApplication() {
         Journal journal = new Journal();
         Park park = new Park(20);
         List<Car> cars = createCars(10);
-//        List<Integer> numbers = new Random()
-//                .ints(30, 1, 18)
-//                .boxed()
-//                .collect(Collectors.toList());
-//
-//        System.out.println(numbers);
-//
-//        Canvas canvas = new Canvas();
-//
-//        canvas.drawBorder("#");
-////        canvas.setPixel(3, 5, "@");
-//
-//        for(int i = 0; i < numbers.size(); i++) {
-//            for(int j = 0; j < numbers.get(i); j++) {
-//                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
-//            }
-//
-//        }
-//
-//        canvas.printTextLine(5, 5, " My canvas ");
-//        System.out.println(canvas);
-//
-//
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime ldtEnd = now.plusDays(30);
 
+        List<Integer> numbers = new Random()
+                .ints(30, 1, 18)
+                .boxed()
+                .collect(Collectors.toList());
+
+        System.out.println(numbers);
+
+        Canvas canvas = new Canvas();
+
+        canvas.drawBorder("#");
+        canvas.setPixel(3, 5, "@");
+
+        for(int i = 0; i < numbers.size(); i++) {
+            for(int j = 0; j < numbers.get(i); j++) {
+                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
+            }
+
+        }
+
+        canvas.printTextLine(5, 5, " My canvas ");
+        System.out.println(canvas);
+//
+//
+//        simulateDays(30, journal, park, cars);
+//        initMenu(journal, park, cars);
+    }
+
+    private static void simulateDays(int days, Journal journal, Park park, List<Car> cars) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ldtEnd = now.plusDays(days);
         for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
             LocalDateTime current = i;
             cars.forEach(obj -> obj.update(park, journal, current));
         }
-
-        initMenu(journal, park, cars);
     }
 
     private static List<Car> createCars(int size) {
