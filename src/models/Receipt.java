@@ -1,36 +1,73 @@
 package models;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Receipt {
-    private String carId;
-    private Duration duration;
-    private int cost;
-    private long totalCost;
-    private LocalDate receiptDate;
+    private final String carId;
+    private final LocalDateTime arrival;
+    private final LocalDateTime departure;
+    private final int paidMinutes;
+    private final double costPerMinute = 0.10;
+    private final double totalCost;
 
-    public Receipt(String carId, Duration duration, int cost, long totalCost, LocalDate receiptDate) {
+    public Receipt(String carId, LocalDateTime arrival, LocalDateTime departure) {
         this.carId = carId;
-        this.duration = duration;
-        this.cost = cost;
-        this.totalCost = totalCost;
-        this.receiptDate = receiptDate;
+        this.arrival = arrival;
+        this.departure = departure;
+        this.paidMinutes = calculatePaidMinutes();
+        this.totalCost = paidMinutes * costPerMinute;
+    }
+
+
+    private int calculatePaidMinutes() {
+
+        long totalDurationMinutes = Duration.between(arrival, departure).toMinutes();
+
+
+        if (totalDurationMinutes <= 30) {
+            return 0;
+        }
+
+        int paidMinutes = 0;
+        LocalDateTime currentTime = arrival;
+
+        while (currentTime.isBefore(departure)) {
+            int hour = currentTime.getHour();
+
+
+            if (hour >= 9 && hour < 20) {
+                paidMinutes++;
+            }
+
+            currentTime = currentTime.plusMinutes(1);
+        }
+
+        return paidMinutes;
     }
 
     @Override
     public String toString() {
-        return "Чек: " + carId +
-                ", Время стоянки c 9 утра до 9 вечера: " + duration.toMinutes() + " мин" +
-                ", Тариф: " + cost +
-                ", Итого к оплате: " + totalCost;
+        return String.format("ЧЕК ОПЛАТЫ | Стоянка: %d мин | Оплач. время: %d мин | СТОИМОСТЬ: %.2f руб.",
+                Duration.between(arrival, departure).toMinutes(),
+                paidMinutes,
+                totalCost);
     }
 
-    public long getTotalCost() {
+
+    public double getTotalCost() {
         return totalCost;
     }
 
-    public LocalDate getReceiptDate() {
-        return receiptDate;
+    public String getCarId() {
+        return carId;
+    }
+
+    public LocalDateTime getArrival() {
+        return arrival;
+    }
+
+    public LocalDateTime getDeparture() {
+        return departure;
     }
 }
