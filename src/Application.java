@@ -12,10 +12,14 @@ public class Application {
     public static void runApplication() {
         Journal journal = new Journal();
         Park park = new Park(20);
-        List<Car> cars = createCars(10);
+        List<Car> cars = createCars(15);
 
         simulateDays(30, journal, park, cars);
-        initMenu(journal, park, cars);
+        try {
+            initMenu(journal, park, cars);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Ошибка" + e.getMessage());
+        }
     }
 
     private static void simulateDays(int days, Journal journal, Park park, List<Car> cars) {
