@@ -77,6 +77,8 @@ public class Application {
         LocalDateTime startHour = LocalDateTime.now().withHour(14).withMinute(0).withSecond(0); // c
         LocalDateTime endHour = startHour.plusHours(1); // по
         journal.printCarsByHour(startHour, endHour);
+
+        journal.printDaysByCarId(cars.get(0).getCarId());
 //
 //        System.out.println(counter);
 

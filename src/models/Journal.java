@@ -171,6 +171,33 @@ public class Journal {
         System.out.println("=========================================");
     }
 
+    public void printDaysByCarId(String carId) {
+        System.out.println("=========================================");
+        System.out.printf("Дни, в которые машина с номером %s была на парковке:%n", carId);
+        Set<LocalDate> uniqueDates = new HashSet<>();
+        boolean found = false;
+        for (Data data : dataList) {
+            if (data.getCarId().equals(carId)) {
+                if (data.getArrival() != null) {
+                    uniqueDates.add(data.getArrival().toLocalDate());
+                }
+                if (data.getDeparture() != null) {
+                    uniqueDates.add(data.getDeparture().toLocalDate());
+                }
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Машина с таким номером не посещала парковку.");
+        } else {
+            for (LocalDate date : uniqueDates) {
+                System.out.println(date);
+            }
+        }
+        System.out.println("=========================================");
+    }
+
     public void printTopTenCars() {
         maps.sortTopTenCars(getTopTenCars());
     }
