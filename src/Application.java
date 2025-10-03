@@ -4,12 +4,9 @@ import models.Park;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Application {
     public static void runApplication() {
@@ -19,8 +16,6 @@ public class Application {
 
         simulateDays(30, journal, park, cars);
         initMenu(journal, park, cars);
-
-
     }
 
     private static void simulateDays(int days, Journal journal, Park park, List<Car> cars) {
@@ -43,53 +38,55 @@ public class Application {
     public static boolean switchMenu(String choice, Journal journal, Park park, List<Car> cars) {
         Scanner sc = new Scanner(System.in);
         switch (choice) {
-            case "1" -> {
-                System.out.println("Введите день: от 0 до 30 (0 - это сегодня)");
-                String answer = sc.nextLine().trim();
-                LocalDate chooseDate = LocalDate.now().plusDays(Long.parseLong(answer));
-                Long total = journal.getTotalByDay(chooseDate);
-                if (total == null) {
-                    System.out.printf("За %s нет заработка%n", chooseDate);
-                } else {
-                    System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
-                }
-            }
+            case "1" -> inputDayEarnMoney(journal, sc);
             case "2" -> drawCanvasForMoney(journal);
             case "3" -> journal.printTopTenCars();
             case "4" -> drawCanvas(journal.printLessStayed(30), "Машины припаркованыне менее 30 минут в день");
             case "5" -> drawCanvas(journal.printCountRatio(park), "Среднее кол-во занятых мест каждый день");
-            case "6" -> {
-                System.out.println("Введите номер дня: от 1 до 30");
-                String day = sc.nextLine().trim();
-                LocalDate chooseNewDate = LocalDate.now().plusDays(Long.parseLong(day));
-                journal.printCarsByDate(chooseNewDate);
-                System.out.println("Введите номер часа: от 0 до 24");
-                String hour = sc.nextLine().trim();
-                LocalDateTime start = LocalDateTime.now().withHour(Integer.parseInt(hour)).withMinute(0).withSecond(0);
-                System.out.println("Введите продолжительность: ");
-                String duration = sc.nextLine().trim();
-                LocalDateTime end = start.plusHours(Long.parseLong(duration));
-                journal.printCarsByHour(start, end);
-            }
-            case "7" -> {
-                cars.forEach(car -> System.out.println(car.getCarId()));
-                System.out.print("Введите номер машины: ");
-                String carId = sc.nextLine();
-                journal.printDaysByCarId(carId);
-            }
-            case "8" -> {
-                journal.printLog();
-            }
+            case "6" -> inputDayHour(journal, sc);
+            case "7" -> inputCarNumber(journal, cars, sc);
+            case "8" -> journal.printLog();
             case "9" -> {
                 System.out.println("Выход из программы.");
                 return false;
             }
-            default -> {
-                System.out.println("Неверный выбор, пожалуйста, выберите из предложенного списка.");
-                break;
-            }
+            default -> System.out.println("Неверный выбор, пожалуйста, выберите из предложенного списка.");
+
         }
         return true;
+    }
+
+    private static void inputCarNumber(Journal journal, List<Car> cars, Scanner sc) {
+        cars.forEach(car -> System.out.println(car.getCarId()));
+        System.out.print("Введите номер машины: ");
+        String carId = sc.nextLine();
+        journal.printDaysByCarId(carId);
+    }
+
+    private static void inputDayEarnMoney(Journal journal, Scanner sc) {
+        System.out.println("Введите день: от 0 до 30 (0 - это сегодня)");
+        String answer = sc.nextLine().trim();
+        LocalDate chooseDate = LocalDate.now().plusDays(Long.parseLong(answer));
+        Long total = journal.getTotalByDay(chooseDate);
+        if (total == null) {
+            System.out.printf("За %s нет заработка%n", chooseDate);
+        } else {
+            System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
+        }
+    }
+
+    private static void inputDayHour(Journal journal, Scanner sc) {
+        System.out.println("Введите номер дня: от 1 до 30");
+        String day = sc.nextLine().trim();
+        LocalDate chooseNewDate = LocalDate.now().plusDays(Long.parseLong(day));
+        journal.printCarsByDate(chooseNewDate);
+        System.out.println("Введите номер часа: от 0 до 24");
+        String hour = sc.nextLine().trim();
+        LocalDateTime start = LocalDateTime.now().withHour(Integer.parseInt(hour)).withMinute(0).withSecond(0);
+        System.out.println("Введите продолжительность: ");
+        String duration = sc.nextLine().trim();
+        LocalDateTime end = start.plusHours(Long.parseLong(duration));
+        journal.printCarsByHour(start, end);
     }
 
     private static void showMenu() {
@@ -110,7 +107,6 @@ public class Application {
     public static void drawCanvas(List<Integer> numbers, String name) {
         System.out.println(numbers);
         Canvas canvas = new Canvas();
-
         canvas.drawBorder("#");
 
         for (int i = 0; i < numbers.size(); i++) {
@@ -124,7 +120,7 @@ public class Application {
     }
 
     public static void drawCanvasForMoney(Journal journal) {
-        List<Long> numbers = journal.getTotalByDay();
+        List<Long> numbers = journal.printStatistic();
         List<Long> copy = new ArrayList<>();
         copy.addAll(numbers);
         numbers.replaceAll(aLong -> aLong / 1000);
