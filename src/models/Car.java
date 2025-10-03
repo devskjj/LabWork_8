@@ -25,19 +25,11 @@ public class Car {
         state.changeState(this, park, journal, time);
     }
 
-    public void showCar() {
-        System.out.println(state.getValue() + " " + carId);
-    }
-
     public String getCarId() {
         return carId;
     }
 
     public void setState(State state) {
         this.state = state;
-    }
-
-    public State getState() {
-        return state;
     }
 }

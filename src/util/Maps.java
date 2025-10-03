@@ -22,10 +22,6 @@ public class Maps {
         return moneyByDate.get(date);
     }
 
-    public List<Long> getTotalByDate() {
-        return printStatistic();
-    }
-
     public List<Long> printStatistic() {
         if (moneyByDate.isEmpty()) {
             System.out.println("Нет данных для статистики.");

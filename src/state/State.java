@@ -39,8 +39,4 @@ public enum State {
     }
 
     public abstract void changeState(Car car, Park park, Journal journal, LocalDateTime time);
-
-    public String getValue() {
-        return value;
-    }
 }
