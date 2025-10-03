@@ -17,31 +17,10 @@ public class Application {
         Park park = new Park(20);
         List<Car> cars = createCars(10);
 
-        List<Integer> numbers = new Random()
-                .ints(30, 1, 18)
-                .boxed()
-                .collect(Collectors.toList());
+        simulateDays(30, journal, park, cars);
+        initMenu(journal, park, cars);
 
-        System.out.println(numbers);
 
-        Canvas canvas = new Canvas();
-
-        canvas.drawBorder("#");
-        canvas.setPixel(3, 5, "@");
-
-        for(int i = 0; i < numbers.size(); i++) {
-            for(int j = 0; j < numbers.get(i); j++) {
-                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
-            }
-
-        }
-
-        canvas.printTextLine(5, 5, " My canvas ");
-        System.out.println(canvas);
-//
-//
-//        simulateDays(30, journal, park, cars);
-//        initMenu(journal, park, cars);
     }
 
     private static void simulateDays(int days, Journal journal, Park park, List<Car> cars) {
@@ -75,10 +54,10 @@ public class Application {
                     System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
                 }
             }
-            case "2" -> journal.printStatistic();
+            case "2" -> drawCanvasForMoney(journal);
             case "3" -> journal.printTopTenCars();
-            case "4" -> journal.printLessStayed(30);
-            case "5" -> journal.printCountRatio(park);
+            case "4" -> drawCanvas(journal.printLessStayed(30), "Машины припаркованыне менее 30 минут в день");
+            case "5" -> drawCanvas(journal.printCountRatio(park), "Среднее кол-во занятых мест каждый день");
             case "6" -> {
                 System.out.println("Введите номер дня: от 1 до 30");
                 String day = sc.nextLine().trim();
@@ -117,15 +96,52 @@ public class Application {
         System.out.println("====================================");
         System.out.println("Меню:");
         System.out.println("1) Общая сумма заработка за один рабочий день");
-        System.out.println("2) Минимальная, средняя и максимальная сумма заработка за период симуляции");
+        System.out.println("2) Минимальная, средняя и максимальная сумма заработка за период симуляции (с гистограммой)");
         System.out.println("3) Топ 10 машин, стоявших на парковке дольше всего");
-        System.out.println("4) Сколько машин стояло на парковке меньше 30 минут");
-        System.out.println("5) Средний процент загруженности парковки в день");
+        System.out.println("4) Сколько машин стояло на парковке меньше 30 минут (с гистограммой)");
+        System.out.println("5) Средний процент загруженности парковки в день (с гистограммой)");
         System.out.println("6) Список побывавших машин на парковке за определенный час/день");
         System.out.println("7) По номеру машины вывести все дни, в которые она была на парковке");
         System.out.println("8) Информация по всему журналу");
         System.out.println("9) Выход");
         System.out.print("Выберите опцию: ");
+    }
+
+    public static void drawCanvas(List<Integer> numbers, String name) {
+        System.out.println(numbers);
+        Canvas canvas = new Canvas();
+
+        canvas.drawBorder("#");
+
+        for (int i = 0; i < numbers.size(); i++) {
+            for (int j = 0; j < numbers.get(i); j++) {
+                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
+            }
+        }
+
+        canvas.printTextLine(5, 1, name);
+        System.out.println(canvas);
+    }
+
+    public static void drawCanvasForMoney(Journal journal) {
+        List<Long> numbers = journal.getTotalByDay();
+        List<Long> copy = new ArrayList<>();
+        copy.addAll(numbers);
+        numbers.replaceAll(aLong -> aLong / 1000);
+
+        System.out.println(copy);
+        Canvas canvas = new Canvas();
+
+        canvas.drawBorder("#");
+
+        for (int i = 0; i < numbers.size(); i++) {
+            for (int j = 0; j < numbers.get(i); j++) {
+                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
+            }
+        }
+
+        canvas.printTextLine(5, 1, " Ежедневный заработок за каждый день ");
+        System.out.println(canvas);
     }
 
     public static void initMenu(Journal journal, Park park, List<Car> cars) {
@@ -138,6 +154,4 @@ public class Application {
         }
         sc.close();
     }
-
-
 }
