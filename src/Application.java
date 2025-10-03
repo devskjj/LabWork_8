@@ -13,10 +13,7 @@ public class Application {
     public static void runApplication() {
         Journal journal = new Journal();
         Park park = new Park(20);
-        List<Car> cars = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            cars.add(new Car());
-        }
+        List<Car> cars = createCars(10);
 //        List<Integer> numbers = new Random()
 //                .ints(30, 1, 18)
 //                .boxed()
@@ -41,37 +38,22 @@ public class Application {
 //
 //
         LocalDateTime now = LocalDateTime.now();
-
         LocalDateTime ldtEnd = now.plusDays(30);
 
-//        System.out.println(now);
-//        System.out.println(ldtEnd);
-//
-//        int counter = 0;
         for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
             LocalDateTime current = i;
             cars.forEach(obj -> obj.update(park, journal, current));
         }
 
         initMenu(journal, park, cars);
-//        journal.printStatistic()1; //статистика
-//
-//        journal.printTopTenCars(); // топ 10
-//
-//        journal.printLessStayed(30);
-//
-//        journal.printCountRatio(park); // среднйи процент
-//
-//        journal.printCarsByDate(chooseDate);
-//
-//        LocalDateTime startHour = LocalDateTime.now().withHour(14).withMinute(0).withSecond(0);
-//        LocalDateTime endHour = startHour.plusHours(1);
-//        journal.printCarsByHour(startHour, endHour);
-//
-//        journal.printDaysByCarId(cars.get(0).getCarId());
-//
-//        System.out.println(counter);
+    }
 
+    private static List<Car> createCars(int size) {
+        List<Car> cars = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            cars.add(new Car());
+        }
+        return cars;
     }
 
     public static boolean switchMenu(String choice, Journal journal, Park park, List<Car> cars) {
