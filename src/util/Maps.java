@@ -32,10 +32,16 @@ public class Maps {
             return null;
         }
 
+        List<Map.Entry<LocalDate, Long>> naturalOrder = new ArrayList<>(moneyByDate.entrySet());
+        naturalOrder.sort(Comparator.comparing(Map.Entry::getKey));
+
+        List<Long> forCanvas = new ArrayList<>();
+        for (Map.Entry<LocalDate, Long> entry : naturalOrder) {
+            forCanvas.add(entry.getValue());
+        }
+
         Collection<Long> data = moneyByDate.values();
         List<Long> sorted = new ArrayList<>(data);
-        List<Long> forCanvas = new ArrayList<>();
-        forCanvas.addAll(sorted);
         Collections.sort(sorted);
 
         long min = sorted.get(0);

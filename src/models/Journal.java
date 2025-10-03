@@ -224,8 +224,8 @@ public class Journal {
         return maps.getTotalByDate();
     }
 
-    public void printStatistic() {
-        maps.printStatistic();
+    public List<Long> printStatistic() {
+        return maps.printStatistic();
     }
 
     public void printLog() {
@@ -312,10 +312,6 @@ public class Journal {
 
         public void setDeparture(LocalDateTime departure) {
             this.departure = departure;
-        }
-
-        public Receipt getReceipt() {
-            return receipt;
         }
     }
 }
