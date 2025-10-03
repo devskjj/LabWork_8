@@ -58,7 +58,7 @@ public class Journal {
         return map;
     }
 
-    public void printLessStayed(long minutes) {
+    public List<Integer> printLessStayed(long minutes) {
         Map<LocalDate, Integer> lessStayed = new HashMap<>();
         for (Data data : dataList) {
             if (data.getDeparture() != null && data.getDifference() != null) {
@@ -71,7 +71,7 @@ public class Journal {
         }
         if (lessStayed.isEmpty()) {
             System.out.println("Нет машин, стоявших меньше " + minutes + " минут.");
-            return;
+            return null;
         }
 
         System.out.println("=========================================");
@@ -81,9 +81,15 @@ public class Journal {
         }
         System.out.println("=========================================");
 
+        List<Integer> forCanvas = new ArrayList<>();
+
+        for (Map.Entry<LocalDate, Integer> entry : lessStayed.entrySet()) {
+            forCanvas.add(entry.getValue());
+        }
+        return forCanvas;
     }
 
-    public void printCountRatio(Park park) {
+    public List<Integer> printCountRatio(Park park) {
         Map<LocalDate, Integer> takenCounts = new HashMap<>();
         for (Data data : dataList) {
             if (data.getArrival() != null) {
@@ -96,7 +102,15 @@ public class Journal {
                 takenCounts.put(departureDate, Math.max(0, takenCounts.getOrDefault(departureDate, 0) - 1));
             }
         }
+
+        List<Integer> forCanvas = new ArrayList<>();
+
+        for (Map.Entry<LocalDate, Integer> entry : takenCounts.entrySet()) {
+            forCanvas.add(entry.getValue());
+        }
+
         printAveragePercentOfCounts(park, takenCounts);
+        return forCanvas;
     }
 
     private void printAveragePercentOfCounts(Park park, Map<LocalDate, Integer> takenCounts) {
@@ -204,6 +218,10 @@ public class Journal {
 
     public Long getTotalByDay(LocalDate date) {
         return maps.getTotalByDate(date);
+    }
+
+    public List<Long> getTotalByDay() {
+        return maps.getTotalByDate();
     }
 
     public void printStatistic() {

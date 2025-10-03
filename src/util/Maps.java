@@ -1,6 +1,5 @@
 package util;
 
-import models.Journal;
 import models.Receipt;
 
 import java.time.LocalDate;
@@ -23,14 +22,20 @@ public class Maps {
         return moneyByDate.get(date);
     }
 
-    public void printStatistic() {
+    public List<Long> getTotalByDate() {
+        return printStatistic();
+    }
+
+    public List<Long> printStatistic() {
         if (moneyByDate.isEmpty()) {
             System.out.println("Нет данных для статистики.");
-            return;
+            return null;
         }
 
         Collection<Long> data = moneyByDate.values();
         List<Long> sorted = new ArrayList<>(data);
+        List<Long> forCanvas = new ArrayList<>();
+        forCanvas.addAll(sorted);
         Collections.sort(sorted);
 
         long min = sorted.get(0);
@@ -48,6 +53,7 @@ public class Maps {
         System.out.println("Максимум: " + max);
         System.out.println("Среднее: " + average);
         System.out.println("=========================================");
+        return forCanvas;
     }
 
     public void sortTopTenCars(Map<String, Long> map) {
