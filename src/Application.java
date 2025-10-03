@@ -5,15 +5,59 @@ import models.Park;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Application {
     public static void runApplication() {
         Journal journal = new Journal();
         Park park = new Park(20);
         List<Car> cars = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+
+
+        for (int i = 0; i < 200; i++) {
             cars.add(new Car());
         }
+
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ldtEnd = now.plusDays(30);
+
+
+
+
+        while (now.isBefore(ldtEnd)) {
+
+            now = now.plusMinutes(5);
+
+
+            for (Car car : cars) {
+                car.update(park, journal, now);
+            }
+
+
+            // if (now.getMinute() == 0 && now.getHour() == 12) {
+            //     System.out.println("Парковка на " + now.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + ". Свободно мест: " + park.getCount());
+            // }
+        }
+
+
+
+
+
+        System.out.println("Обработка машин, оставшихся на парковке...");
+        for (Car car : cars) {
+            if (car.getState().getValue().equals("НА ПАРКОВКЕ")) {
+                journal.saveDeparture(car.getCarId(), ldtEnd);
+            }
+        }
+
+
+        System.out.println("\n--- ЖУРНАЛ ПАРКОВКИ ---\n");
+        journal.printLog();
+
+        // Здесь должен быть код для реализации пользовательского меню,
+        // а также вычисления статистики и отрисовки гистограмм (Canvas).
 
 //        List<Integer> numbers = new Random()
 //                .ints(30, 1, 18)
@@ -25,37 +69,10 @@ public class Application {
 //        Canvas canvas = new Canvas();
 //
 //        canvas.drawBorder("#");
-////        canvas.setPixel(3, 5, "@");
 //
-//        for(int i = 0; i < numbers.size(); i++) {
-//            for(int j = 0; j < numbers.get(i); j++) {
-//                canvas.setPixel((i + 1) * 2, canvas.getHeight() - j - 2, "*");
-//            }
-//
-//        }
+//        // ... логика рисования гистограммы ...
 //
 //        canvas.printTextLine(5, 5, " My canvas ");
 //        System.out.println(canvas);
-//
-//
-        LocalDateTime now = LocalDateTime.now();
-
-        LocalDateTime ldtEnd = now.plusDays(1);
-
-//        System.out.println(now);
-//        System.out.println(ldtEnd);
-//
-//        int counter = 0;
-        for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
-            System.out.println(i);
-            LocalDateTime current = i;
-            cars.forEach(obj -> obj.update(park, journal, current));
-            cars.forEach(obj -> obj.showCar());
-        }
-
-        journal.printLog();
-//
-//        System.out.println(counter);
-
     }
 }

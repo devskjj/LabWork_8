@@ -16,7 +16,7 @@ public class Receipt {
         this.arrival = arrival;
         this.departure = departure;
         this.paidMinutes = calculatePaidMinutes();
-              this.totalCost = paidMinutes * costPerMinute;
+        this.totalCost = paidMinutes * costPerMinute;
     }
 
 
@@ -32,7 +32,7 @@ public class Receipt {
         int paidMinutes = 0;
         LocalDateTime currentTime = arrival;
 
-         while (currentTime.isBefore(departure)) {
+        while (currentTime.isBefore(departure)) {
             int hour = currentTime.getHour();
 
 
