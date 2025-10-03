@@ -19,20 +19,11 @@ public class Journal {
         }
     }
 
-        public void saveDeparture(String carId, LocalDateTime time) {
-                for (int i = dataList.size() - 1; i >= 0; i--) {
+    public void saveDeparture(String carId, LocalDateTime time) {
+        for (int i = dataList.size() - 1; i >= 0; i--) {
             Data data = dataList.get(i);
             if (data.getDeparture() == null && data.getCarId().equals(carId)) {
-
                 data.setDeparture(time);
-
-                Receipt receipt = new Receipt(carId, data.getArrival(), data.getDeparture());
-
-
-                if (receipt.getTotalCost() > 0) {
-                    data.setReceipt(receipt);
-                }
-
                 break;
             }
         }
@@ -42,17 +33,11 @@ public class Journal {
         dataList.forEach(System.out::println);
     }
 
-    public List<Data> getDataList() {
-        return dataList;
-    }
-
-
-    public static class Data {
-        private final String carId;
-        private final LocalDateTime arrival;
+    private static class Data {
+        private String carId;
+        private LocalDateTime arrival;
         private LocalDateTime departure;
         private Duration difference;
-        private Receipt receipt; // Поле для хранения чека
 
         public Data(String carId, LocalDateTime arrival) {
             this.carId = carId;
@@ -64,14 +49,9 @@ public class Journal {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             String departureStr = (departure != null) ? departure.format(formatter) : "не выезжал";
             String durationStr = (difference != null) ? String.valueOf(difference.toMinutes()) : "неизвестно";
-
-                       String receiptStr = (receipt != null)
-                    ? " | " + receipt.toString()
-                    : " | Оплата не взималась (менее 30 мин или нерабочее время)";
-
             return "Номер машины: " + carId +
                     ", Въезд: " + arrival.format(formatter) +
-                    ", Выезд: " + departureStr + " *** длительность парковки: " + durationStr + " мин" + receiptStr;
+                    ", Выезд: " + departureStr + " *** длительность парковки: " + durationStr + " мин";
         }
 
         public String getCarId() {
@@ -89,18 +69,6 @@ public class Journal {
         public void setDeparture(LocalDateTime departure) {
             this.departure = departure;
             this.difference = Duration.between(this.arrival, this.departure);
-        }
-
-        public Duration getDifference() {
-            return difference;
-        }
-
-        public Receipt getReceipt() {
-            return receipt;
-        }
-
-        public void setReceipt(Receipt receipt) {
-            this.receipt = receipt;
         }
     }
 }
