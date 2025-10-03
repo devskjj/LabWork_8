@@ -17,7 +17,6 @@ public class Application {
         for (int i = 0; i < 7; i++) {
             cars.add(new Car());
         }
-
 //        List<Integer> numbers = new Random()
 //                .ints(30, 1, 18)
 //                .boxed()
@@ -43,54 +42,44 @@ public class Application {
 //
         LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime ldtEnd = now.plusDays(5);
+        LocalDateTime ldtEnd = now.plusDays(30);
 
 //        System.out.println(now);
 //        System.out.println(ldtEnd);
 //
 //        int counter = 0;
         for (LocalDateTime i = now; i.isBefore(ldtEnd); i = i.plusMinutes(5)) {
-            System.out.println(i);
             LocalDateTime current = i;
             cars.forEach(obj -> obj.update(park, journal, current));
-            cars.forEach(obj -> obj.showCar());
-        }
-        journal.printLog();
-
-        LocalDate chooseDate = LocalDate.now().plusDays(3); // со скана запрашивать число
-        Long total = journal.getTotalByDay(chooseDate);
-        if (total == null) {
-            System.out.printf("За %s нет заработка%n", chooseDate);
-        } else {
-            System.out.printf("Общ. сумма заработка за %s день: %s%n", chooseDate, total);
         }
 
-        journal.printStatistic(); //статистика
-
-        journal.printTopTenCars(); // топ 10
-
-        journal.printLessStayed(30);
-
-        journal.printCountRatio(park); // среднйи процент
-
-        journal.printCarsByDate(chooseDate);
-
-        LocalDateTime startHour = LocalDateTime.now().withHour(14).withMinute(0).withSecond(0); // c
-        LocalDateTime endHour = startHour.plusHours(1); // по
-        journal.printCarsByHour(startHour, endHour);
-
-        journal.printDaysByCarId(cars.get(0).getCarId());
+        initMenu(journal, park, cars);
+//        journal.printStatistic()1; //статистика
+//
+//        journal.printTopTenCars(); // топ 10
+//
+//        journal.printLessStayed(30);
+//
+//        journal.printCountRatio(park); // среднйи процент
+//
+//        journal.printCarsByDate(chooseDate);
+//
+//        LocalDateTime startHour = LocalDateTime.now().withHour(14).withMinute(0).withSecond(0);
+//        LocalDateTime endHour = startHour.plusHours(1);
+//        journal.printCarsByHour(startHour, endHour);
+//
+//        journal.printDaysByCarId(cars.get(0).getCarId());
 //
 //        System.out.println(counter);
 
     }
 
-    public static void switchMenu(String choice, Journal journal, Park park, List<Car> cars) {
+    public static boolean switchMenu(String choice, Journal journal, Park park, List<Car> cars) {
         Scanner sc = new Scanner(System.in);
         switch (choice) {
             case "1" -> {
-                System.out.println("Введите день: от 1 до 30");
-                String answer = sc.nextLine();
+                System.out.println("Введите день: от 0 до 30 (0 - это сегодня)");
+                String answer = sc.nextLine().trim();
                 LocalDate chooseDate = LocalDate.now().plusDays(Long.parseLong(answer));
                 Long total = journal.getTotalByDay(chooseDate);
                 if (total == null) {
@@ -105,14 +94,14 @@ public class Application {
             case "5" -> journal.printCountRatio(park);
             case "6" -> {
                 System.out.println("Введите номер дня: от 1 до 30");
-                String day = sc.nextLine();
+                String day = sc.nextLine().trim();
                 LocalDate chooseNewDate = LocalDate.now().plusDays(Long.parseLong(day));
                 journal.printCarsByDate(chooseNewDate);
                 System.out.println("Введите номер часа: от 0 до 24");
-                String hour = sc.nextLine();
+                String hour = sc.nextLine().trim();
                 LocalDateTime start = LocalDateTime.now().withHour(Integer.parseInt(hour)).withMinute(0).withSecond(0);
                 System.out.println("Введите продолжительность: ");
-                String duration = sc.nextLine();
+                String duration = sc.nextLine().trim();
                 LocalDateTime end = start.plusHours(Long.parseLong(duration));
                 journal.printCarsByHour(start, end);
             }
@@ -123,11 +112,44 @@ public class Application {
                 journal.printDaysByCarId(carId);
             }
             case "8" -> {
-                System.out.println("Выход из программы.");
-                sc.close();
+                journal.printLog();
             }
-            default -> System.out.println("Неверный выбор, пожалуйста, выберите из предложенного списка.");
+            case "9" -> {
+                System.out.println("Выход из программы.");
+                return false;
+            }
+            default -> {
+                System.out.println("Неверный выбор, пожалуйста, выберите из предложенного списка.");
+                break;
+            }
         }
+        return true;
+    }
+
+    private static void showMenu() {
+        System.out.println("====================================");
+        System.out.println("Меню:");
+        System.out.println("1) Общая сумма заработка за один рабочий день");
+        System.out.println("2) Минимальная, средняя и максимальная сумма заработка за период симуляции");
+        System.out.println("3) Топ 10 машин, стоявших на парковке дольше всего");
+        System.out.println("4) Сколько машин стояло на парковке меньше 30 минут");
+        System.out.println("5) Средний процент загруженности парковки в день");
+        System.out.println("6) Список побывавших машин на парковке за определенный час/день");
+        System.out.println("7) По номеру машины вывести все дни, в которые она была на парковке");
+        System.out.println("8) Информация по всему журналу");
+        System.out.println("9) Выход");
+        System.out.print("Выберите опцию: ");
+    }
+
+    public static void initMenu(Journal journal, Park park, List<Car> cars) {
+        Scanner sc = new Scanner(System.in);
+        boolean cycle = true;
+        while (cycle) {
+            showMenu();
+            String choice = sc.nextLine().trim();
+            cycle = switchMenu(choice, journal, park, cars);
+        }
+        sc.close();
     }
 
 
