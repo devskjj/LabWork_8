@@ -17,10 +17,6 @@ public class Park {
         return initialCount;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     public void decreaseCount() {
         if (count > 0) {
             count--;
